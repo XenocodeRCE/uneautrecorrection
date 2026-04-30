@@ -1,0 +1,733 @@
+<!DOCTYPE html><html lang="fr"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>L'appel - Une autre correction est possible</title>
+    <style>
+        :root {
+            --bg-color: #ffffff;
+            --text-color: #000000;
+            --accent-color: #e53935;
+            --highlight-color: #fff176;
+            --gray-light: #f5f5f5;
+            --sidebar-width: 350px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.5;
+            font-size: 18px;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* --- SIDEBAR --- */
+        .sidebar {
+            width: var(--sidebar-width);
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            border-right: 2px solid var(--text-color);
+            background-color: var(--bg-color);
+            z-index: 100;
+            overflow-y: auto;
+        }
+
+        .logo {
+            font-size: 3.5rem;
+            font-weight: 900;
+            line-height: 0.9;
+            text-transform: lowercase;
+            margin-bottom: 1rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .slash-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+            font-size: 1.8rem;
+        }
+
+        .slash { color: var(--accent-color); font-weight: 900; }
+        .page-title { font-size: 1.3rem; font-weight: bold; }
+
+        nav {
+            margin-top: 3rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        nav a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-size: 1.1rem;
+            font-weight: bold;
+            transition: color 0.2s;
+        }
+
+        nav a:hover, nav a.active {
+            color: var(--accent-color);
+            text-decoration: underline;
+            text-decoration-thickness: 3px;
+        }
+
+        .social-links {
+            margin-top: auto;
+            padding-top: 2rem;
+            font-size: 0.9rem;
+        }
+
+        .social-links a {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-color);
+        }
+
+        /* --- MAIN CONTENT --- */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            padding: 4rem;
+            max-width: 900px;
+            width: 100%;
+        }
+
+        .hero { margin-bottom: 4rem; }
+
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero p { font-size: 1.4rem; font-weight: bold; }
+
+        .highlight {
+            background-color: var(--highlight-color);
+            padding: 0 5px;
+        }
+
+        .red-text { color: var(--accent-color); }
+
+        .join-us {
+            display: inline-block;
+            margin-top: 1rem;
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: var(--accent-color);
+            text-transform: uppercase;
+        }
+
+        /* --- MANIFESTO --- */
+        .manifesto h2 {
+            font-size: 2.5rem;
+            font-weight: 900;
+            margin: 4rem 0 2rem 0;
+            border-bottom: 4px solid var(--text-color);
+            padding-bottom: 0.5rem;
+        }
+
+        .manifesto .intro {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 3rem;
+            border-left: 5px solid var(--accent-color);
+            padding-left: 1rem;
+        }
+
+        .manifesto h3 {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin: 2.5rem 0 1rem 0;
+        }
+
+        .thesis {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background-color: var(--gray-light);
+            border-left: 4px solid var(--text-color);
+        }
+
+        .thesis-title {
+            font-weight: 900;
+            font-size: 1.15rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* --- ACCORDION --- */
+        .accordion {
+            margin-top: 1rem;
+            border-top: 1px dashed #999;
+            padding-top: 0.8rem;
+        }
+
+        .accordion-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: bold;
+            color: var(--accent-color);
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: inherit;
+            padding: 0.3rem 0;
+        }
+
+        .accordion-toggle::before {
+            content: "+";
+            display: inline-block;
+            font-size: 1.4rem;
+            line-height: 1;
+            transition: transform 0.2s;
+        }
+
+        .accordion-toggle.open::before {
+            content: "−";
+        }
+
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            font-size: 0.95rem;
+        }
+
+        .accordion-content.open {
+            max-height: 2000px;
+            padding-top: 1rem;
+        }
+
+        .accordion-content blockquote {
+            border-left: 3px solid var(--accent-color);
+            padding-left: 1rem;
+            margin: 1rem 0;
+            font-style: italic;
+            color: #444;
+        }
+
+        .accordion-content ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .accordion-content li {
+            padding: 0.5rem 0;
+            border-bottom: 1px dotted #ccc;
+        }
+
+        .accordion-content a {
+            color: var(--accent-color);
+            font-weight: bold;
+        }
+
+        /* --- SIGN SECTION --- */
+        .sign-section {
+            margin-top: 5rem;
+            padding-top: 3rem;
+            border-top: 2px dashed var(--text-color);
+        }
+
+        .sign-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .sign-card {
+            border: 3px solid var(--text-color);
+            padding: 1.5rem;
+        }
+
+        .sign-card h4 {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            font-weight: 900;
+        }
+
+        .sign-email {
+            margin-top: 1rem;
+        }
+
+        .btn-sign {
+            display: inline-block;
+            background-color: var(--text-color);
+            color: var(--bg-color);
+            padding: 0.8rem 1.5rem;
+            font-size: 1.1rem;
+            font-weight: bold;
+            text-decoration: none;
+            margin-top: 1rem;
+            border: 2px solid var(--text-color);
+            transition: all 0.2s;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .btn-sign:hover {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
+        }
+
+        .signatories-count {
+            font-size: 3rem;
+            font-weight: 900;
+            margin-bottom: 0.5rem;
+            color: var(--accent-color);
+        }
+
+        .signatories-count-label {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 2rem;
+        }
+
+        .signatories-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 0.8rem;
+            font-size: 0.9rem;
+        }
+
+        .signatory {
+            padding: 0.5rem 0;
+            border-bottom: 1px dotted #999;
+        }
+
+        .signatory-name { font-weight: bold; }
+
+        .loading {
+            font-style: italic;
+            color: #666;
+        }
+
+        /* --- FAQ --- */
+        .faq-item {
+            border: 2px solid var(--text-color);
+            margin-bottom: 1rem;
+        }
+
+        .faq-question {
+            padding: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            background: none;
+            border: none;
+            width: 100%;
+            text-align: left;
+            font-size: 1rem;
+            font-family: inherit;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .faq-question:hover { background-color: var(--gray-light); }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s;
+            padding: 0 1rem;
+        }
+
+        .faq-answer.open {
+            max-height: 500px;
+            padding: 1rem;
+            border-top: 1px solid var(--text-color);
+        }
+
+        /* --- WIDGET BOX --- */
+        .widget-box {
+            background-color: var(--text-color);
+            color: var(--bg-color);
+            padding: 2rem;
+            margin: 3rem 0;
+        }
+
+        .widget-box h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .widget-box code {
+            display: block;
+            background: #222;
+            padding: 1rem;
+            margin-top: 1rem;
+            font-family: monospace;
+            font-size: 0.85rem;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 900px) {
+            body { flex-direction: column; }
+            .sidebar {
+                position: relative;
+                width: 100%;
+                height: auto;
+                border-right: none;
+                border-bottom: 2px solid var(--text-color);
+                padding: 1.5rem;
+            }
+            .logo { font-size: 2.5rem; flex-direction: row; flex-wrap: wrap; gap: 10px; }
+            nav { margin-top: 1.5rem; flex-direction: row; flex-wrap: wrap; }
+            .main-content { margin-left: 0; padding: 2rem 1.5rem; }
+            .hero h1 { font-size: 2rem; }
+            .manifesto h2 { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="logo">
+            <span>une</span>
+            <span>autre</span>
+            <span>correction</span>
+        </div>
+        <div class="slash-container">
+            <span class="slash">/</span>
+            <span class="page-title">L'appel</span>
+        </div>
+        <nav>
+            <a href="#appel" class="active">L'appel</a>
+            <a href="#signer">Signer</a>
+            <a href="#signataires">Signataires</a>
+            <a href="#faq">FAQ</a>
+        </nav>
+        <div class="social-links">
+            <a href="https://github.com/XenocodeRCE/uneautrecorrection" target="_blank" rel="noopener noreferrer">→ GitHub</a>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="hero">
+            <h1>Toutes et tous pour la défense du jugement humain !</h1>
+            <p>Parce-qu'<span class="highlight">une autre correction est possible</span>, nous sommes des enseignantes et enseignants qui nous organisons !</p>
+            <span class="join-us">Rejoignez-nous !</span>
+        </header>
+
+        <article id="appel" class="manifesto">
+            <h2>L'appel</h2>
+            <p class="intro">Ce texte fondateur a pour but de poser les conditions d'un usage de l'IA qui ne trahisse ni l'élève, ni le savoir, ni le métier d'enseignant. Il est à l'état de brouillon. Vous voulez participez ? <a href="https://github.com/XenocodeRCE/uneautrecorrection" target="_blank" rel="noopener noreferrer">Modifiez-le directement sur Github</a> !</p>
+
+            <p>Nous pensons que l'irruption des grands modèles de langage dans les pratiques enseignantes appelle moins une condamnation qu'une clarification. Ces outils ne sont pas des collègues, ils ne sont pas de "simples logiciels", ils occupent une place inédite : une place qui exige une réflexion à la hauteur des enjeux.</p>
+
+            <h3>I. Ce que l'IA n'est pas</h3>
+
+            <div class="thesis">
+                <div class="thesis-title">1. L'IA ne comprend pas une copie au sens où un professeur la comprend.</div>
+                <p>Elle reconstruit des régularités à partir de traces textuelles, sans jamais avoir habité les questions que ces traces portent. On peut objecter que ce qui compte, pour l'élève, c'est l'utilité pédagogique du retour, non la "phénoménologie du correcteur", peu importe ce qu'on met derrière ce concept. Mais pourtant ce que le professeur lit dans une copie, ce n'est pas qu'un texte conforme ou non à des critères formels. C'est l'effort d'une pensée en construction, avec ses hésitations, ses ellipses, ses intuitions maladroites. Reconnaître cet effort suppose d'avoir soi-même fait l'expérience de penser sous contrainte, d'avoir tâtonné face à un problème difficile. Un système entraîné sur des textes achevés ne peut identifier ce type d'effort : il peut en produire les signes de surface, il ne peut pas en percevoir la direction. C'est précisément cette perception qui rend un retour pédagogiquement efficace, et pas seulement formellement correct.</p>
+                <div class="accordion">
+                    <button class="accordion-toggle">Pour aller plus loin</button>
+                    <div class="accordion-content">
+                        <p><strong>La chambre chinoise de Searle (1980)</strong> : un système qui manipule des symboles syntaxiquement n'accède pas pour autant au sens. C'est une position philosophique influente, mais elle est contestée depuis 45 ans (Dennett, Hofstadter et d'autres la réfutent ou la nuancent). Nous ne la citons pas comme une évidence, mais comme un cadre de questionnement. L'argument fondamental est en réalité d'ordre institutionnel : quelle que soit la résolution du débat philosophique sur la compréhension de l'IA, la responsabilité de l'évaluation incombe à un enseignant identifiable, pas à un système opaque. Il faut distinguer deux questions : <em>est-ce que l'IA comprend ?</em> (débat non tranché, épistémologique voire métaphysique) et <em>faut-il un humain pour évaluer ?</em> (thèse défendable indépendamment de la première). Voir J. Searle, "Minds, Brains, and Programs". <a href="https://www.persee.fr/doc/quad_0987-1381_1987_num_1_1_2097" target="_blank" rel="noopener noreferrer">→ Traduction française (Persée)</a></p>
+                        <ul>
+                            <li><a href="https://dl.acm.org/doi/epdf/10.1145/3442188.3445922" target="_blank" rel="noopener noreferrer">→ Bender et al. (2021), "On the Dangers of Stochastic Parrots"</a></li>
+                            <li><a href="https://archive.org/details/whatcomputerscan017504mbp" target="_blank" rel="noopener noreferrer">→ Hubert Dreyfus, <em>What Computers Can't Do</em></a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="thesis">
+                <div class="thesis-title">2. L'évaluation est un acte institutionnel, pas un service automatisé.</div>
+                <p>Le fait qu'une correction automatique puisse paraître semblable à une correction humaine ne dit rien sur ce qui fonde la valeur d'une évaluation. L'évaluation scolaire est un acte institutionnel : elle engage la responsabilité d'un professionnel identifiable, tenu de justifier son jugement devant l'élève, la famille et l'institution. Un système automatique ne peut assumer cette responsabilité, quand bien même son résultat serait superficiellement semblable à celui d'un correcteur humain. Ce qui manque n'est pas la performance : c'est l'auteur du jugement.</p>
+                <div class="accordion">
+                    <button class="accordion-toggle">Pour aller plus loin</button>
+                    <div class="accordion-content">
+                        <ul>
+                            <li><a href="https://hal.science/hal-03922948/document" target="_blank" rel="noopener noreferrer">→ Expliquer, comprendre, interpréter: ce qu’il y a d’herméneutique dans l’évaluation — Alban Roblez</a></li>
+                            <li><a href="https://books.openedition.org/pun/6972" target="_blank" rel="noopener noreferrer">→ L'interprétation : un concept stabilisé ? à stabiliser ? — Sylviane Ahr</a></li>
+                            <li><a href="https://www.cnesco.fr/wp-content/uploads/2024/07/210218_Cnesco_Tricot_Numerique_Fonctions_pedagogiques.pdf" target="_blank" rel="noopener noreferrer">→ Tricot, A. (2020). Quelles fonctions pédagogiques bénéficient des apports du numérique ? Paris : Cnesco-Cnam.</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="thesis">
+                <div class="thesis-title">3. L'IA n'est pas neutre.</div>
+                <p>Elle valorise certaines formes d'écriture (fluidité, conformité stylistique) et en pénalise d'autres (maladresse féconde, écart singulier). Ces biais sont constitutifs de la manière dont ces modèles sont entraînés. Les correcteurs humains sont eux aussi biaisés : la docimologie a depuis longtemps documenté des écarts considérables entre correcteurs sur la même copie. On pourrait alors penser qu'un biais algorithmique uniforme est préférable à cette loterie, d'autant qu'il est mesurable à grande échelle : on peut soumettre 10 000 copies fictives à un LLM en faisant varier uniquement le prénom ou le registre de langue, et documenter les écarts. C'est d'ailleurs exactement ce que fait l'étude Salinas, Haim et Nyarko citée ci-dessous. Les biais des LLM sont, à cet égard, plus mesurables que les biais humains. Concédons-le. Mais mesurable ne signifie pas contestable. La différence décisive n'est pas l'auditabilité statistique : c'est la possibilité du recours individuel. Un élève peut demander une double correction, un correcteur peut argumenter son jugement devant une commission, une institution peut réviser une note. Ces mécanismes présupposent un auteur identifiable du jugement. Face à un système automatique, ces voies sont fermées : le biais peut être connu en agrégat et rester sans recours pour chacun. Ce n'est pas de la justice, c'est de la standardisation.</p>
+                <div class="accordion">
+                    <button class="accordion-toggle">Pour aller plus loin</button>
+                    <div class="accordion-content">
+                        <ul>
+                            <li><a href="https://arxiv.org/abs/2402.14875" target="_blank" rel="noopener noreferrer">→ Salinas, Alejandro ; Haim, Amit ; Nyarko, Julian, <em>What's in a Name? Auditing Large Language Models for Race and Gender Bias</em></a></li>
+                            <li><a href="https://hai.stanford.edu/news/how-language-bias-persists-in-scientific-publishing-despite-ai-tools" target="_blank" rel="noopener noreferrer">→ Stanford HAI — How language bias persists in scientific publishing despite AI tools</a></li>
+                            <li><a href="https://hal.science/hal-04222701v1/document" target="_blank" rel="noopener noreferrer">→ <em>Aucoeur des inégalités numériques, les inégalités sociales</em> — Prisca Fenoglio</a></li>
+                            <li><a href="https://web.stanford.edu/~eckert/Courses/ParisPapers/BourdieuBoltanski.pdf" target="_blank" rel="noopener noreferrer">→ Bourdieu et Boltanski, <em>Le fétichisme de la langue</em></a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <h3>II. Ce que corriger veut dire</h3>
+
+            <div class="thesis">
+                <div class="thesis-title">4. Corriger n'est pas classer.</div>
+                <p>Une copie n'est pas un objet à étiqueter mais une trace de pensée à reconstruire. Corriger, c'est saisir ce qu'un élève a tenté de penser, parfois contre ce qu'il a écrit.</p>
+                <div class="accordion">
+                    <button class="accordion-toggle">Pour aller plus loin</button>
+                    <div class="accordion-content">
+                        <ul>
+                            <li><a href="http://eduka.free.fr/education/enseignement/1%20L'%E9valuation%20-%20r%E8gles%20du%20jeu_Charles%20Hadji_SCAN0081_000.pdf" target="_blank" rel="noopener noreferrer">→ Charles Hadji, <em>L'évaluation, règles du jeu</em></a></li>
+                            <li><a href="https://shs.cairn.info/regulation-des-apprentissages-en-situation-scolair--9782804153144?lang=fr" target="_blank" rel="noopener noreferrer">→ Linda Allal et Lucie Mottier Lopez (dir.), <em>Régulation des apprentissages en situation scolaire et en formation</em>, De Boeck Supérieur, 2007</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="thesis">
+                <div class="thesis-title">5. Corriger est un acte de reconnaissance.</div>
+                <p>L'élève écrit pour être lu par quelqu'un. Substituer à cette adresse un traitement automatique, sans le dire, c'est rompre un pacte tacite qui fonde la relation pédagogique. On objectera, peut-être à juste titre, que ce pacte est déjà mis à rude épreuve par les conditions matérielles : copies corrigées en diagonale lors des sessions d'examen massif, classes surchargées, délais contraints. C'est vrai. Mais cela plaide pour améliorer ces conditions, non pour les aggraver : la dégradation existante de la relation n'autorise pas sa suppression.</p>
+                <div class="accordion">
+                    <button class="accordion-toggle">Pour aller plus loin</button>
+                    <div class="accordion-content">
+                        <ul>
+                            <li><a href="https://storage.gra.cloud.ovh.net/v1/AUTH_3877b9485d06455c8b7c11a9fadaeb2d/attachments/original/7/4/6/002625746.pdf" target="_blank" rel="noopener noreferrer">→ Bernard Stiegler, <em>Prendre soin, de la jeunesse et des générations</em></a></li>
+                            <li><a href="https://www.cahiers-pedagogiques.com/sommaire-revue-578/" target="_blank" rel="noopener noreferrer">→ Dossier "Écrire pour être lu" (Les Cahiers pédagogiques)</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="thesis">
+                <div class="thesis-title">6. Corriger engage le correcteur, et c'est l'élève qui en bénéficie.</div>
+                <p>Le professeur qui corrige observe comment sa classe pense : quels malentendus persistent, quelles notions restent mal assimilées, quels exercices ont échoué à transmettre ce qu'ils devaient transmettre. Cette lecture est une source d'information pédagogique directe, qui nourrit les séquences suivantes, les reformulations, les retours collectifs en classe. Déléguer la correction à un système automatique, c'est s'abstraire de cette boucle de retour. Il ne s'agit pas ici d'être corporatiste : il faut plutôt s'intérroger sur la qualité de l'enseignement que reçoit l'élève. Un professeur qui ne lit plus ses copies ne sait plus où en est sa classe.</p>
+                <div class="accordion">
+                    <button class="accordion-toggle">Pour aller plus loin</button>
+                    <div class="accordion-content">
+                        <ul>
+                            <li><a href="http://emmenhelen.free.fr/le%20praticien%20reflexif.pdf" target="_blank" rel="noopener noreferrer">→ Donald Schön, <em>The Reflective Practitioner</em></a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <h3>III. Usages légitimes</h3>
+
+            <div class="thesis">
+                <div class="thesis-title">7. L'IA peut assister, elle ne doit pas se substituer.</div>
+                <p>Elle peut aider à repérer des fautes formelles, suggérer des reformulations. Le jugement final, le commentaire qui s'adresse à l'élève, et la note, restent l'acte du professeur.</p>
+                <div class="accordion">
+                    <button class="accordion-toggle">Cas pratiques</button>
+                    <div class="accordion-content">
+                        <ul>
+                            <li>✅ Détecter des fautes orthographiques récurrentes pour cibler une remédiation</li>
+                            <li>✅ Générer des grilles de correction comme point de départ</li>
+                            <li>❌ Attribuer une note finale sans relecture humaine</li>
+                            <li>❌ Rédiger des appréciations personnalisées à la place du professeur</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="thesis">
+                <div class="thesis-title">7b. L'auto-évaluation des élèves par l'IA est l'usage le plus répandu et le moins encadré.</div>
+                <p>Les élèves soumettent quotidiennement leurs propres travaux à des correcteurs automatiques, souvent sans que leurs enseignants en soient informés. Cet usage massif, probablement plus fréquent que la correction enseignante par IA (pour le moment), constitue un angle mort pédagogique majeur. Il ne s'agit ni de l'interdire, ni de le laisser se déployer sans cadre, mais de l'inscrire dans une pratique réfléchie.</p>
+                <div class="accordion">
+                    <button class="accordion-toggle">Cas pratiques</button>
+                    <div class="accordion-content">
+                        <ul>
+                            <li>✅ Utiliser un retour IA sur un brouillon comme point de départ d'une révision, avant remise au professeur</li>
+                            <li>✅ Comparer la correction IA et la correction professorale pour analyser les écarts en classe</li>
+                            <li>❌ Substituer entièrement le retour du professeur par un retour IA, sans validation humaine</li>
+                            <li>❌ Faire valider par IA un travail noté sans que l'enseignant ait défini les règles d'usage</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="thesis">
+                <div class="thesis-title">8. L'IA peut être un objet d'étude.</div>
+                <p>Faire corriger une copie par une IA en classe, comparer cette correction à celle du professeur, analyser les écarts : voilà un exercice critique précieux.</p>
+                <div class="accordion">
+                    <button class="accordion-toggle">Séquences pédagogiques</button>
+                    <!-- Il serait bien de réflechir à une séquence type (l'IA face à mes copies), un atelier (détecter les hallucinations), une fiche d'activité pour comparer les corrections etc. rendre ça manifeste à l'élève, pédagogie explicite -->
+                    <div class="accordion-content">
+                    </div>
+                </div>
+            </div>
+
+            <h3>IV. Lignes rouges</h3>
+
+            <div class="thesis">
+                <div class="thesis-title">9. Aucune correction ne doit être déléguée à l'IA sans que l'élève en soit informé.</div>
+                <p>La transparence n'est pas une option : elle est la condition minimale d'un rapport honnête.</p>
+                <div class="accordion">
+                    <button class="accordion-toggle">Cadre juridique</button>
+                    <div class="accordion-content">
+                        <ul>
+                            <li><a href="https://www.cnil.fr/fr/reglement-europeen-protection-donnees/chapitre3#Article22" target="_blank" rel="noopener noreferrer">→ RGPD article 22 : droit à ne pas faire l'objet d'une décision automatisée</a></li>
+                            <li><a href="https://artificialintelligenceact.eu/fr/ai-act-explorer/" target="_blank" rel="noopener noreferrer">→ AI Act européen (2024) : obligations de transparence</a></li>
+                            <li><a href="https://www.cnil.fr/fr/profilage-et-decision-entierement-automatisee" target="_blank" rel="noopener noreferrer">→ Avis CNIL sur l'évaluation algorithmique en milieu scolaire</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="thesis">
+                <div class="thesis-title">10. Aucune décision à fort enjeu ne doit reposer principalement sur une évaluation automatisée.</div>
+                <p>Le poids existentiel d'une note exige une responsabilité humaine, identifiable et contestable.</p>
+                <div class="accordion">
+                    <button class="accordion-toggle">Pour aller plus loin</button>
+                    <div class="accordion-content">
+                        <ul>
+                            <li><a href="https://questions.assemblee-nationale.fr/q17/17-8792QE.htm" target="_blank" rel="noopener noreferrer">→ Parcoursup : l'illusion de l'équité</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="thesis">
+                <div class="thesis-title">11. L'inégalité d'accès à l'IA crée des inégalités de traitement entre élèves.</div>
+                <p>Si certains enseignants utilisent l'IA pour corriger et d'autres non, on introduit une disparité structurelle : les élèves ne sont pas évalués selon les mêmes procédures, ni par les mêmes acteurs. Cette inégalité est à la fois pédagogique et juridique, dans un système où l'uniformité des conditions d'évaluation est une exigence de justice. L'absence de cadre institutionnel clair ne protège personne ; elle crée un angle mort que chaque établissement comble à sa façon, selon ses ressources et ses convictions.</p>
+                <div class="accordion">
+                    <button class="accordion-toggle">Pour aller plus loin</button>
+                    <div class="accordion-content">
+                        <ul>
+                            <li><a href="https://hal.science/hal-04222701v1/document" target="_blank" rel="noopener noreferrer">→ Fenoglio, P., <em>Au cœur des inégalités numériques, les inégalités sociales</em></a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <h3>V. Horizon</h3>
+            <p>La question n'est pas « l'IA va-t-elle remplacer les professeurs ? » mais « <span class="red-text">quel enseignement voulons-nous ?</span> ». Préserver la correction humaine, c'est préserver une école où l'élève écrit pour être lu, non traité ; où il pense devant un autre qui pense.</p>
+        </article>
+
+        <!-- SIGNER -->
+        <section id="signer" class="sign-section">
+            <h2>Signer l'appel</h2>
+            <p>Nous appelons à refuser l'automatisation aveugle de l'évaluation, à exiger des institutions un cadre éthique clair, et à afficher sur nos espaces pédagogiques notre soutien à la correction humaine.</p>
+
+            <div class="sign-options">
+                <div class="sign-card">
+                    <h4>→ Avec un compte GitHub</h4>
+                    <p>Créez une "issue" sur notre dépôt GitHub avec vos informations (nom, fonction, établissement) et cliquez sur Submit new issue.</p>
+                    <a href="https://github.com/XenocodeRCE/uneautrecorrection/issues/new?labels=signature&amp;title=Signer+l%27appel&amp;body=Nom+:+%0AFonction+:+%0A%C3%89tablissement+(facultatif)+:+%0A" class="btn-sign" target="_blank" rel="noopener">Signer via GitHub</a>
+                </div>
+                <div class="sign-card">
+                    <h4>→ Sans compte GitHub</h4>
+                    <p>Envoyez-nous un email avec vos informations à :</p>
+                    <p class="sign-email"><strong>simon.roux@ac-grenoble.fr</strong></p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SIGNATAIRES -->
+        <section id="signataires" class="sign-section">
+            <h2>Signataires</h2>
+            <div class="signatories-count" id="count">—</div>
+            <div class="signatories-count-label">enseignantes et enseignants ont signé</div>
+            <p><em>Les actions et publications du collectif ne reflètent pas forcément la vision de l'ensemble des signataires du texte initial.</em></p>
+            <br>
+            <div class="signatories-list" id="signatories-list">
+                <div class="loading">Chargement des signataires depuis GitHub...</div>
+            </div>
+        </section>
+
+        <!-- FAQ -->
+        <section id="faq" class="sign-section">
+            <h2>FAQ</h2>
+
+            <div class="faq-item">
+                <button class="faq-question">Mais l'IA me fait gagner un temps précieux, pourquoi y renoncer ? <span>+</span></button>
+                <div class="faq-answer">
+                    <p>Nous ne demandons pas un renoncement, mais une clarification des usages. L'IA peut alléger des tâches purement formelles ; ce que nous refusons, c'est qu'elle se substitue au jugement final, qui engage la relation pédagogique elle-même.</p>
+                    <p>Mais si l'on demande aux enseignants de renoncer à un gain de temps réel, il faut nommer ce qui doit leur être donné en échange : réduction des effectifs par classe, diminution du nombre de copies imposées, temps de concertation institutionnellement reconnu. Refuser l'IA de correction sans revendiquer simultanément ces allègements structurels serait une injonction sans moyen. La question de la charge de travail n'est pas un argument POUR l'IA, c'est un argument avant tout POUR une meilleure organisation du métier.</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question">L'IA n'est-elle pas plus juste qu'un correcteur humain fatigué ? <span>+</span></button>
+                <div class="faq-answer">
+                    <p>L'apparente impartialité de l'IA masque des biais d'entraînement. Une fatigue humaine se voit, se discute, se conteste. Un biais algorithmique reste opaque. La justice scolaire suppose la possibilité du recours.</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question">Êtes-vous opposés à toute forme de technologie en classe ? <span>+</span></button>
+                <div class="faq-answer">
+                    <p>Non. Nous distinguons les outils qui augmentent le jugement humain de ceux qui prétendent s'y substituer. L'IA peut être un formidable objet d'étude critique avec les élèves.</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question">Comment retirer ma signature ? <span>+</span></button>
+                <div class="faq-answer">
+                    <p>Si vous avez signé via GitHub, fermez simplement votre issue. Sinon, envoyez-nous un email et nous retirerons votre nom dans les meilleurs délais.</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        // --- ACCORDIONS ---
+        document.querySelectorAll('.accordion-toggle').forEach(btn => {
+            btn.addEventListener('click', () => {
+                btn.classList.toggle('open');
+                btn.nextElementSibling.classList.toggle('open');
+            });
+        });
+
+        // --- FAQ ---
+        document.querySelectorAll('.faq-question').forEach(btn => {
+            btn.addEventListener('click', () => {
+                btn.nextElementSibling.classList.toggle('open');
+                const span = btn.querySelector('span');
+                span.textContent = span.textContent === '+' ? '−' : '+';
+            });
+        });
+
+        // --- GITHUB SIGNATORIES ---
+        const GITHUB_OWNER = 'XenocodeRCE';
+        const GITHUB_REPO = 'uneautrecorrection';
+        const API_URL = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/issues?state=open&labels=signature&per_page=100`;
+
+        async function loadSignatories() {
+            const list = document.getElementById('signatories-list');
+            const count = document.getElementById('count');
+            
+            try {
+                const res = await fetch(API_URL);
+                if (!res.ok) throw new Error('GitHub API error');
+                const issues = await res.json();
+                count.textContent = issues.length;
+                list.innerHTML = issues.map(issue => {
+                    // Parser le body de l'issue pour extraire nom et fonction
+                    const body = issue.body || '';
+                    const nameMatch = body.match(/Nom\s*:\s*(.+)/i);
+                    const funcMatch = body.match(/Fonction\s*:\s*(.+)/i);
+                    const name = nameMatch ? nameMatch[1].trim() : issue.user.login;
+                    const func = funcMatch ? funcMatch[1].trim() : '';
+                    return `<div class="signatory"><span class="signatory-name">${name}</span>${func ? ', ' + func : ''}</div>`;
+                }).join('');
+            } catch (err) {
+                list.innerHTML = '<div class="loading">Impossible de charger les signataires pour le moment.</div>';
+            }
+        }
+        loadSignatories();
+    </script>
+
+
+</body></html>
