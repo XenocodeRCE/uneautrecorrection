@@ -702,7 +702,7 @@
         // --- GITHUB SIGNATORIES ---
         const GITHUB_OWNER = 'XenocodeRCE';
         const GITHUB_REPO = 'uneautrecorrection';
-        const API_URL = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/issues?state=open&labels=signature&per_page=100`;
+        const API_URL = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/issues?state=open&per_page=100`;
 
         async function loadSignatories() {
             const list = document.getElementById('signatories-list');
@@ -712,8 +712,11 @@
                 const res = await fetch(API_URL);
                 if (!res.ok) throw new Error('GitHub API error');
                 const issues = await res.json();
-                count.textContent = issues.length;
-                list.innerHTML = issues.map(issue => {
+                const signatures = issues.filter(issue =>
+                    issue.title && issue.title.toLowerCase().includes('signer')
+                );
+                count.textContent = signatures.length;
+                list.innerHTML = signatures.map(issue => {
                     // Parser le body de l'issue pour extraire nom et fonction
                     const body = issue.body || '';
                     const nameMatch = body.match(/Nom\s*:\s*(.+)/i);
